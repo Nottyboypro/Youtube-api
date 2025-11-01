@@ -9,7 +9,7 @@ BOT_TOKEN = "8239718956:AAF9cYssUnTbHcPhcmLO8VAaw8xgGR6_7EU"
 CHANNEL_ID = -1002999363928  # Channel ka numeric ID
 CHANNEL_USERNAME = "@NOTTYAPI"
 
-SECRET_KEY_JWT = "change_this_secret"  # JWT secret key
+SECRET_KEY_JWT = "nooty"  # JWT secret key
 CONCURRENCY_LIMIT = 10
 PORT = 8000
 ADMIN_USERNAME = "admin"
