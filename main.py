@@ -18,15 +18,22 @@ bot = Client("NottyBoyBot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKE
 concurrency_sem = asyncio.Semaphore(CONCURRENCY_LIMIT)
 
 # include routers
-app.include_router(yt_mp3_router, prefix="/")
+app.include_router(yt_mp3_router, prefix="")
 app.include_router(admin_router, prefix="/admin")
 
 
 @app.on_event("startup")
 async def startup_event():
     LOGGER.info("Starting up: connecting bot and scheduler...")
-    await bot.start()
-    LOGGER.info("Pyrogram bot started")
+    try:
+        await asyncio.wait_for(bot.start(), timeout=10.0)
+        LOGGER.info("Pyrogram bot started successfully")
+    except asyncio.TimeoutError:
+        LOGGER.error("Bot startup timed out after 10 seconds")
+        LOGGER.warning("Application will continue without bot functionality")
+    except Exception as e:
+        LOGGER.error(f"Failed to start Pyrogram bot: {e}")
+        LOGGER.warning("Application will continue without bot functionality")
     # create indexes for Mongo (safe if run multiple times)
     await mongodb.api_keys.create_index("api_key_hash", unique=True, sparse=True)
     await mongodb.audio_cache.create_index("video_id", unique=True)
@@ -41,7 +48,11 @@ async def startup_event():
 @app.on_event("shutdown")
 async def shutdown_event():
     LOGGER.info("Shutting down bot...")
-    await bot.stop()
+    try:
+        if bot.is_connected:
+            await bot.stop()
+    except Exception as e:
+        LOGGER.error(f"Error stopping bot: {e}")
 
 
 @app.get("/health")
