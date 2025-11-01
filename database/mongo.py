@@ -1,16 +1,19 @@
+import logging
 from motor.motor_asyncio import AsyncIOMotorClient
 from config import MONGO_DB_URI
-from logging_ import LOGGER  # direct import – no relative issues
 
-# Initialize logger
-logger = LOGGER(__name__)
+# Setup simple logger
+logging.basicConfig(
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    level=logging.INFO
+)
+logger = logging.getLogger("MongoDB")
 
 logger.info("Connecting to your Mongo Database...")
 
 try:
-    # Connect to MongoDB
     _mongo_async_ = AsyncIOMotorClient(MONGO_DB_URI)
-    mongodb = _mongo_async_["Anon"]  # database name
+    mongodb = _mongo_async_["Anon"]  # Database name 'Anon'
     logger.info("✅ Connected to your Mongo Database.")
 except Exception as e:
     logger.error(f"❌ Failed to connect to your Mongo Database: {e}")
